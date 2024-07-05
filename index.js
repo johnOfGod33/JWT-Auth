@@ -36,3 +36,9 @@ const verifyToken = (req, res, next) => {
     res.status(401).json(err);
   }
 };
+
+module.exports = {
+  getHashPassword,
+  getToken,
+  verifyToken,
+};
