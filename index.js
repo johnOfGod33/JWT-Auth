@@ -3,18 +3,17 @@ const bcrypt = require("bcrypt");
 
 /**
  *
- * @param {String | Number} password the password to be encrypted
+ * @param {String | Buffer} password the password to be encrypted
  * @returns A promise to be either resolved by the encrypted password or or rejected with an error
  */
 
 const getHashPassword = async (password) => {
-  let encryptedPassword;
-
   try {
-    encryptedPassword = bcrypt.hash(password, 10);
-    return encryptedPassword;
+    let encryptedPassword = await bcrypt.hash(password, 10);
+
+    return Promise.resolve(encryptedPassword);
   } catch (err) {
-    return new Error("password required");
+    return Promise.reject(new Error("Password required"));
   }
 };
 
@@ -32,15 +31,19 @@ const authentification = async (
   userId,
   secretKey
 ) => {
-  const isValid = await bcrypt.compare(inputPassword, encryptedPassword);
+  try {
+    const isValid = await bcrypt.compare(inputPassword, encryptedPassword);
 
-  if (isValid) {
-    const token = jwt.sign({ ID: userId }, secretKey, { expiresIn: "2h" });
+    if (isValid) {
+      const token = jwt.sign({ ID: userId }, secretKey, { expiresIn: "2h" });
 
-    return token;
+      return Promise.resolve(token);
+    } else {
+      return Promise.reject(new Error("password don't match"));
+    }
+  } catch (err) {
+    return Promise.reject(err);
   }
-
-  return new Error("password don't match");
 };
 
 /**
