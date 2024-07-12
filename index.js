@@ -50,15 +50,18 @@ const authentification = async (
  * Intercept request and verify the token
  */
 
-const verifyToken = (req, res, next) => {
-  try {
-    const token = req.headers.authorization.split(" ")[1];
-    const decodedToken = jwt.verify(token, secretKey);
-    req.ID = decodedToken.ID;
-    next();
-  } catch (err) {
-    res.status(401).json(err);
-  }
+const verifyToken = (secretKey) => {
+  return (req, res, next) => {
+    try {
+      console.log(req.headers.Authorization);
+      const token = req.headers.Authorization.split(" ")[1];
+      const decodedToken = jwt.verify(token, secretKey);
+      req.ID = decodedToken.ID;
+      next();
+    } catch (err) {
+      res.status(401).json(err);
+    }
+  };
 };
 
 module.exports = {
