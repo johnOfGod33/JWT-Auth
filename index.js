@@ -32,17 +32,15 @@ const authentification = async (
   userId,
   secretKey
 ) => {
-  try {
-    const result = await bcrypt.compare(inputPassword, encryptedPassword);
+  const isValid = await bcrypt.compare(inputPassword, encryptedPassword);
 
-    if (result) {
-      const token = jwt.sign({ ID: userId }, secretKey, { expiresIn: "2h" });
+  if (isValid) {
+    const token = jwt.sign({ ID: userId }, secretKey, { expiresIn: "2h" });
 
-      return token;
-    }
-  } catch (err) {
-    return err;
+    return token;
   }
+
+  return new Error("password don't match");
 };
 
 /**
