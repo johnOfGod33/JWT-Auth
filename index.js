@@ -1,23 +1,42 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 
+/**
+ *
+ * @param {String | Number} password the password to be encrypted
+ * @returns A promise to be either resolved by the encrypted password or or rejected with an error
+ */
+
 const getHashPassword = async (password) => {
-  let hashPassord;
+  let encryptedPassword;
 
   try {
-    hashPassord = await bcrypt.hash(password, 10);
-    return hashPassord;
+    encryptedPassword = bcrypt.hash(password, 10);
+    return encryptedPassword;
   } catch (err) {
     return new Error("password required");
   }
 };
 
-const getToken = async (userId, hashPassord, inputPassword, secretKey) => {
+/**
+ *Compare password and create token
+ * @param {String} encryptedPassword your encryptedPassword. it will be compare with input password
+ * @param {String} inputPassword password input
+ * @param {String | Number} userId user id will be use to create token if input password and encrypted password match
+ * @param {String} secretKey Secret key will be use to encrypted the token
+ * @returns
+ */
+const authentification = async (
+  encryptedPassword,
+  inputPassword,
+  userId,
+  secretKey
+) => {
   try {
-    const result = await bcrypt.compare(inputPassword, hashPassord);
+    const result = await bcrypt.compare(inputPassword, encryptedPassword);
 
     if (result) {
-      const token = jwt.sign({ ID: userId }, secretKey, { expiresIn: "30m" });
+      const token = jwt.sign({ ID: userId }, secretKey, { expiresIn: "2h" });
 
       return token;
     }
@@ -25,6 +44,10 @@ const getToken = async (userId, hashPassord, inputPassword, secretKey) => {
     return err;
   }
 };
+
+/**
+ * Intercept request and verify the token
+ */
 
 const verifyToken = (req, res, next) => {
   try {
@@ -39,6 +62,6 @@ const verifyToken = (req, res, next) => {
 
 module.exports = {
   getHashPassword,
-  getToken,
+  authentification,
   verifyToken,
 };
