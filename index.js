@@ -4,10 +4,10 @@ const bcrypt = require("bcrypt");
 /**
  *
  * @param {String | Buffer} password the password to be encrypted
- * @returns A promise to be either resolved by the encrypted password or or rejected with an error
+ * @returns A promise to be either resolved by the hash password or or rejected with an error
  */
 
-const getHashPassword = async (password) => {
+const hashPassword = async (password) => {
   try {
     let encryptedPassword = await bcrypt.hash(password, 10);
 
@@ -18,14 +18,14 @@ const getHashPassword = async (password) => {
 };
 
 /**
- *Compare password and create token
+ *Compare password and create token if passwords matchs
  * @param {String} encryptedPassword your encryptedPassword. it will be compare with input password
  * @param {String} inputPassword password input
  * @param {String | Number} userId user id will be use to create token if input password and encrypted password match
  * @param {String} secretKey Secret key will be use to encrypted the token
- * @returns
+ * @returns A promise to be either resolved by the token or or rejected with an error
  */
-const authentification = async (
+const authenticateUser = async (
   encryptedPassword,
   inputPassword,
   userId,
@@ -47,7 +47,8 @@ const authentification = async (
 };
 
 /**
- * Intercept request and verify the token
+ * A middleware function that verifies the JWT token. If the token is valid, the user ID is added to the request (req.ID), otherwise, a 401 error is returned.
+ * @param {String} secretKey secret key you use to encrypte the token
  */
 
 const verifyToken = (secretKey) => {
@@ -64,7 +65,7 @@ const verifyToken = (secretKey) => {
 };
 
 module.exports = {
-  getHashPassword,
-  authentification,
+  hashPassword,
+  authenticateUser,
   verifyToken,
 };
