@@ -10,7 +10,9 @@ This package provides functions for managing user authentication, including:
 
 # Installing
 
-coming soon
+```bash
+npm i jwt-auths-module
+```
 
 # Usage
 
@@ -21,7 +23,7 @@ This function hash password using bcrypt
 **Example**
 
 ```javascript
-const { hashPassword } = require("<package-name>");
+const { hashPassword } = require("jwt-auths-module");
 
 hashPassword(password)
   .then((hashPassword) => {
@@ -39,7 +41,7 @@ This function compares a password with a hashed password and creates a JWT token
 **Example**
 
 ```javascript
-const { authenticateUser } = require("<package-name>");
+const { authenticateUser } = require("jwt-auths-module");
 
 authenticateUser(hashedPassword, myPassword, userId, mySecretKey)
   .then((token) => {
@@ -58,7 +60,7 @@ This function intercepts an HTTP request and verifies the JWT token in the reque
 
 ```javascript
 const express = require("express");
-const { verifyJwtToken } = require("<package-name>");
+const { verifyJwtToken } = require("jwt-auths-module");
 
 const app = express();
 const secretKey = "mySecretKey";
